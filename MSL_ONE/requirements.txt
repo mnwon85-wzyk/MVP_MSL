@@ -1,0 +1,17 @@
+gradio>=5.0
+pandas
+plotly
+requests
+python-dotenv
+google-genai
+openai
+scikit-learn
+praw
+beautifulsoup4
+googlenewsdecoder==0.2.2
+fastapi>=0.115
+uvicorn>=0.30
+python-pptx
+reportlab
+
+pypdf>=5

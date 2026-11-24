@@ -1,0 +1,24 @@
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# Runtime and personal interaction data
+**/database/hcp_insights.json
+*.db
+*.sqlite*
+*.log
+generated_reports/
+sample_outputs/
+# Dependencies and build artifacts
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+node_modules/
+dist/
+.DS_Store
+*.tar.gz
+# Hosting bindings and local tooling state
+.openai/

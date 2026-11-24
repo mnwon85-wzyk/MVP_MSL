@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "build:cvrm": "node scripts/build-cvrm.mjs",
+    "test:cvrm": "node --test scripts/test-cvrm.mjs",
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint"
+  },
+  "dependencies": {
+    "@google/genai": "^2.21.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lru-cache": "^11.5.2",
+    "pptxgenjs": "^4.0.1"
+  }
+}

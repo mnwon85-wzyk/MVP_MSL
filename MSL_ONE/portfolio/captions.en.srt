@@ -1,0 +1,63 @@
+1
+00:00:00,000 --> 00:00:15,000
+This independent portfolio builds on my clinical operations experience.
+
+2
+00:00:15,000 --> 00:00:30,000
+I do not claim direct MSL or CV experience. This is not an official Bayer tool.
+
+3
+00:00:30,000 --> 00:00:45,000
+My morning desk brings together Bayer and cardiovascular news. Hovering over a card reveals a note.
+
+4
+00:00:45,000 --> 00:01:00,000
+Saved articles and newly retrieved RSS items are labelled separately, with dates and sources.
+
+5
+00:01:00,000 --> 00:01:15,000
+I choose an example, edit the query if needed, and run a real search.
+
+6
+00:01:15,000 --> 00:01:30,000
+Papers, trial registries and the basket have separate columns. I expand the documents I need.
+
+7
+00:01:30,000 --> 00:01:45,000
+Selected documents retain their sources and feed the pre-visit report.
+
+8
+00:01:45,000 --> 00:02:00,000
+I check the HCP name, hospital, specialty and product using public articles.
+
+9
+00:02:00,000 --> 00:02:15,000
+An event appearance does not establish Bayer KOL status. I also check author affiliations.
+
+10
+00:02:15,000 --> 00:02:30,000
+After reading the papers and articles, I write the questions I want to explore.
+
+11
+00:02:30,000 --> 00:02:45,000
+I ask about unresolved issues, such as the burden of testing or applicability of the evidence.
+
+12
+00:02:45,000 --> 00:03:00,000
+After the visit, I separate questions, observations, interpretation, hypotheses and insight candidates.
+
+13
+00:03:00,000 --> 00:03:15,000
+The recording example is a practice conversation, not the public clinician’s words or an activity result.
+
+14
+00:03:15,000 --> 00:03:30,000
+I review the search terms, retrieve related papers, registries and news, and distinguish abstracts from full text.
+
+15
+00:03:30,000 --> 00:03:45,000
+Charts show selected documents and recorded question topics. Study effects are read within each study’s context.
+
+16
+00:03:45,000 --> 00:04:00,000
+I can share separate HTML reports before and after the visit, with outstanding review needs retained.

@@ -1,0 +1,10 @@
+gradio>=5.0
+pandas
+plotly
+requests
+python-dotenv
+google-genai
+openai
+scikit-learn
+praw
+beautifulsoup4

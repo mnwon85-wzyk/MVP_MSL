@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {api,papers,news} from './worker/api.mjs';
+const req=new Request('https://demo.example/cvrm/llm/status');
+test('no API key means no paid analysis request',async()=>{assert.equal((await api('/cvrm/question/analyze',{question:'test'},req,{})).status,'needs_connection');});
+test('encrypted session can be read by a fresh request and expires',async()=>{const env={SESSION_ENCRYPTION_KEY:btoa('12345678901234567890123456789012')};const r=await api('/cvrm/llm/connect',{api_key:'example-key-not-valid-123',model:'gpt-6-luna'},req,env);const cookie=r.headers.get('Set-Cookie');assert.match(cookie,/HttpOnly; Secure; SameSite=Strict/);assert.ok(!cookie.includes('example-key'));assert.equal((await api('/cvrm/llm/status',{},new Request(req,{headers:{Cookie:cookie.split(';')[0]}}),env)).configured,true);assert.equal((await api('/cvrm/llm/status',{},req,env)).configured,false);});
+test('text attachments extract and unknown files are rejected',async()=>{assert.equal((await api('/cvrm/preparation/file',{name:'note.txt',base64:btoa('review source')},req,{})).text,'review source');assert.equal((await api('/cvrm/preparation/file',{name:'x.exe',base64:'YWJj'},req,{})).status,'unavailable');});
+test('PubMed XML preserves identifiers, titles and abstracts',async()=>{const original=globalThis.fetch;globalThis.fetch=async url=>String(url).includes('esearch')?Response.json({esearchresult:{count:'1',idlist:['33264825']}}):new Response('<PubmedArticleSet><PubmedArticle><MedlineCitation><PMID>33264825</PMID><Article><ArticleTitle>FIDELIO trial</ArticleTitle><Abstract><AbstractText>Renal result</AbstractText></Abstract></Article></MedlineCitation></PubmedArticle></PubmedArticleSet>');try{const p=await papers('fid',1,1);assert.equal(p.items[0].id,'33264825');assert.equal(p.items[0].abstract,'Renal result');}finally{globalThis.fetch=original;}});
+test('RSS summaries remain plain text and retain source URLs',async()=>{const original=globalThis.fetch;globalThis.fetch=async()=>new Response('<rss><channel><item><title>Study news</title><link>https://news.google.com/rss/articles/example</link><description>&lt;b&gt;Excerpt&lt;/b&gt;</description></item></channel></rss>');try{const n=await news('fid');assert.equal(n.items[0].summary,' Excerpt ' .trim());assert.ok(n.items[0].url.startsWith('https://'));}finally{globalThis.fetch=original;}});
+
+test('PDF file extraction returns bounded text',async()=>{const result=await api('/cvrm/preparation/file',{name:'sample.pdf',base64:readFileSync('worker/sample.pdf').toString('base64')},req,{});assert.equal(result.status,'ok');assert.match(result.text,/MSL ONE sample/);});
+

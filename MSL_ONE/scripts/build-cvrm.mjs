@@ -1,0 +1,21 @@
+import {completedReviewCase} from '../frontend/src/cvrm/review-case.mjs';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+import {reportBody,initialModel} from '../frontend/src/cvrm/demo.mjs';
+const base=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const dir=path.join(base,'frontend/src/cvrm');
+const data=['evidence.mjs','workspace-data.mjs','verified-search.mjs','review-case.mjs','capture.mjs','capture-ui.mjs','preparation-ui.mjs'].map(file=>readFileSync(path.join(dir,file),'utf8').replaceAll('export const ','const ').replaceAll('export function ','function ')).join('\n');
+const demo=readFileSync(path.join(dir,'demo.mjs'),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export const ','const ').replaceAll('export function ','function ');
+const css=['cvrm.css','compact.css'].map(file=>readFileSync(path.join(dir,file),'utf8')).join('\n');
+const script=(data+'\n'+demo+"\nmountDemo(document.getElementById('demo'),'kr');").replace(/<\/script/gi,'<\\/script');
+const html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MSL ONE / CVRM workspace</title><style>body{margin:0}#demo{max-width:none;margin:0;padding:0}a{overflow-wrap:anywhere}</style><style id="cvrm-style">${css}</style></head><body><div id="demo"></div><script>${script}</script></body></html>`;
+mkdirSync(path.join(base,'portfolio'),{recursive:true});
+writeFileSync(path.join(base,'portfolio/MSL_ONE_CVRM_MVP.html'),html);
+const model=initialModel();model.basket=[...model.papers.filter(p=>['E01','E02'].includes(p.id)),...model.trials.slice(0,1)];
+model.questions=[{text:'모니터링 절차와 환자의 검사 부담은 원 연구에서 어떻게 다뤄졌나요?',topic:'안전성 / 모니터링',source:'확인 문헌:E01'}];
+model.visits=[{question:'칼륨 추적검사에 관한 정보가 필요합니다. (녹화용 연습)',topic:'안전성 / 모니터링',observation:'연습 대화에서 검사 절차를 묻는 질문이 나왔다.',interpretation:'추적검사 설명 자료가 필요할 수 있다.',hypothesis:'모니터링 역할의 명확성이 정보 이해에 영향을 줄 수 있다.',insight:'검증할 정보 요구: 추적검사 기준과 역할 분담.',followup:'안전성 원문과 국내 허가사항을 확인한다.',sourceIds:model.basket.map(r=>r.source+':'+r.id),at:'2026-11-14 / recording example'}];
+for(const [file,part] of [['Report','all'],['Before_Visit','pre'],['After_Visit','post']])writeFileSync(path.join(base,`portfolio/MSL_ONE_CVRM_${file}.html`),`<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MSL ONE / CVRM report</title><style>${css}</style><body class="cv-export"><div class="cvrm">${reportBody(model,part)}</div></body></html>`);
+console.log('Built offline HTML and separate before/after reports. Live searches require api:app on localhost:8000.');
+
+writeFileSync(path.join(base,'portfolio/MSL_ONE_CVRM_Review_Case.html'),`<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CVRM · FIDELIO-DKD Review Case</title><style>${css}</style><body class="cv-export"><main class="cvrm">${completedReviewCase()}</main></body></html>`);

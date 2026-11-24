@@ -1,0 +1,10 @@
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync} from 'node:fs';
+import {build} from 'esbuild';
+mkdirSync('dist/server',{recursive:true});
+mkdirSync('dist/.openai',{recursive:true});
+const html=readFileSync('page.html','utf8');
+const code=`import {api} from './api.mjs';const html=${JSON.stringify(html)};export default {async fetch(request,env){const url=new URL(request.url);if(url.pathname==='/'||url.pathname==='/cvrm'||url.pathname==='/cvrm/'){return new Response(html,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-cache','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin'}});}if(url.pathname.startsWith('/cvrm/')){if(request.method!=='POST'&&url.pathname!=='/cvrm/health')return new Response('Method not allowed',{status:405});const origin=request.headers.get('Origin');if(origin&&origin!==url.origin)return new Response('Forbidden',{status:403});if(Number(request.headers.get('Content-Length')||0)>7500000)return new Response('Too large',{status:413});try{let body={};if(request.method==='POST'){const raw=await request.text();if(raw.length>7500000)return new Response('Too large',{status:413});body=JSON.parse(raw);}const result=await api(url.pathname,body,request,env);return result instanceof Response?result:Response.json(result,{headers:{'Cache-Control':'no-store'}});}catch{return Response.json({status:'unavailable',message:'요청에 연결하지 못했습니다. 잠시 후 다시 시도하세요.'},{status:200,headers:{'Cache-Control':'no-store'}});}}return new Response('Not found',{status:404});}};`;
+writeFileSync('worker/index.mjs',code);
+await build({entryPoints:['worker/index.mjs'],bundle:true,format:'esm',platform:'browser',target:'es2022',outfile:'dist/server/index.js',minify:true,legalComments:'none'});
+copyFileSync('.openai/hosting.json','dist/.openai/hosting.json');
+console.log('Built public MSL ONE Worker.');
